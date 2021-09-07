@@ -165,9 +165,9 @@ Positional parameters are set in `_POSITIONAL_PARAMS` array.
 
 **Credits**
 
-* https://stackoverflow.com/a/14203146
-* https://medium.com/@Drew_Stokes/bash-argument-parsing-54f3b81a6a8f
-* http://mywiki.wooledge.org/BashFAQ/035
+* [How do I parse command line in Bash?](https://stackoverflow.com/a/14203146) on SO
+* [Bash: Argument Parsing](https://medium.com/@Drew_Stokes/bash-argument-parsing-54f3b81a6a8f) from Medium blog
+* [How can I handle command-line easily?](http://mywiki.wooledge.org/BashFAQ/035) from BashFAQ
 
 ### Help
 
