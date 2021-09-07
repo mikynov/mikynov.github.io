@@ -11,8 +11,8 @@ Following [Google's Shell Style Guide](https://google.github.io/styleguide/shell
 
     #!/usr/bin/env bash
 
-    readonly TRACE=${TRACE:-}
-    [[ "${TRACE}" ]] && set -o xtrace
+    readonly TRACE="${TRACE:-}"
+    [[ -n "${TRACE}" ]] && set -o xtrace
     set -o errexit
     set -o errtrace
     set -o nounset
@@ -225,17 +225,17 @@ Positional parameters are set in `_POSITIONAL_PARAMS` array.
 
 ### Bash test environment
 
-    docker run -it --name bash --rm --volume "$(pwd):/home/bash" bash:4
+    docker run -it --rm --volume "$(pwd):/home/bash" bash:4
 
 Check tags for other Bash versions at [Docker hub](https://hub.docker.com/_/bash).
 
 ### Shellcheck
 
-    docker run --rm -v "$(pwd):/mnt" koalaman/shellcheck:stable /mnt/SCRIPT.sh
+    docker run --rm --volume "$(pwd):/mnt" koalaman/shellcheck:stable /mnt/SCRIPT.sh
 
 ### Shellharden
 
-    docker run --rm -v "$(pwd):/mnt" sbkg0002/shellharden:4.0 /mnt/SCRIPT.sh
+    docker run --rm --volume "$(pwd):/mnt" sbkg0002/shellharden:4.0 /mnt/SCRIPT.sh
 
 ## Sources
 
