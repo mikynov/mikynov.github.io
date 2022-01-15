@@ -145,6 +145,7 @@ Positional parameters are set in `_POSITIONAL_PARAMS` array.
                     ;;
             esac
         done
+        # shellcheck disable=SC2294
         eval set -- "${_POSITIONAL_PARAMS[@]}"
     }
 
@@ -153,6 +154,7 @@ Positional parameters are set in `_POSITIONAL_PARAMS` array.
     _main() {
         _parse_args "${@}"
         # Set positional parameters to function(!) scope
+        # shellcheck disable=SC2294
         eval set -- "${_POSITIONAL_PARAMS[@]}"
         # Access named params
         [[ -n ${A_OPT:-} ]] && echo "Flag is set"
