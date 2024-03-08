@@ -4,7 +4,7 @@
 
 Following [Google's Shell Style Guide](https://google.github.io/styleguide/shellguide.html#s2.1-file-extensions):
 
-* Executable scripts should **not have an extension**
+* Executable scripts should **not have an extension** (feel free to break this rule on Windows)
 * Sourced scripts (libraries) **must have an `.sh`** extension and no executable flag
 
 ## Boilerplate
@@ -38,7 +38,7 @@ Following [Google's Shell Style Guide](https://google.github.io/styleguide/shell
     #!/usr/bin/env bash
 
 ### Script directory
-    
+
     readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 ### Enforce Bash version
@@ -51,6 +51,19 @@ Following [Google's Shell Style Guide](https://google.github.io/styleguide/shell
     filename=${FILE%.*}
     extension=${FILE##*.}
 
+### Parse image URI from AWS ECR
+
+    uri="123456789012.dkr.ecr.us-east-1.amazonaws.com/repo/app/test:testing"
+
+    ecr="${uri%%/*}"
+    region="${uri#*.ecr.}"
+    region="${region%%.*}"
+    image="${uri#*/}"
+    image="${image%%:*}"
+    [[ "${image}" == "${uri}" ]] && image=""
+    tag="${uri##*:}"
+    [[ "${tag}" == "${uri}" ]] && tag=""
+
 ### Letter case
 
     readonly STR="BfLmPsVz"
@@ -61,6 +74,14 @@ Following [Google's Shell Style Guide](https://google.github.io/styleguide/shell
 
     readonly STR=$'text\r'
     echo "${STR//[$'\t\r\n']}"
+
+### Read file row by row
+
+Handle spaces correctly (e.g. in file list from _ls_).
+
+    while IFS="" read -r row; do
+        echo "${row}"
+    done < <(ls)
 
 ### Cleanup
 
@@ -102,7 +123,7 @@ Following [Google's Shell Style Guide](https://google.github.io/styleguide/shell
 
 ### Parse args
 
-Parse arguments and set values to `readonly` variables (`A_OPT`, `B_PARAM`).  
+Parse arguments and set values to `readonly` variables (`A_OPT`, `B_PARAM`).
 Positional parameters are set in `_POSITIONAL_PARAMS` array.
 
     _parse_args() {
@@ -134,7 +155,7 @@ Positional parameters are set in `_POSITIONAL_PARAMS` array.
                 --)
                     shift
                     break
-                    ;;        
+                    ;;
                 -*)
                     echo "ERROR: Unknown argument ${1}" >&2
                     exit 1
@@ -182,7 +203,7 @@ Positional parameters are set in `_POSITIONAL_PARAMS` array.
         ${0} [ARGS ...] [TARGET]
 
     DESCRIPTION
-        Ut enim ad minim veniam, quis nostrud exercitation ullamco 
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco
         laboris nisi ut aliquip ex ea commodo consequat.
 
         -a, --a-option         Duis aute irure
@@ -217,6 +238,30 @@ Positional parameters are set in `_POSITIONAL_PARAMS` array.
 
         _in_container && echo "Cargo"
     }
+
+## Return codes
+
+Some return codes are reserved or has conventional use. See https://tldp.org/LDP/abs/html/exitcodes.html.
+
+In general, values grater than 128 are reserved for exit signals. The latest defined return code in Linux is 64 (_SIGRTMAX_). I.e. the latest return code from Bash script is 192.
+
+For user-defined return codes use **3-125 and 193-254** (inclusive).
+
+| Return code | |
+|-------|---|
+| 0     | Success
+| 1     | General error
+| 2     | Wrong use of shell builtins (e.g. builtins are `printf`, `echo` etc.)
+| **3-125** | User-defined return codes
+| 126   | Cannot execute (e.g. wrong permissions)
+| 127   | Not found
+| 128   | Invalid return code (return code must be integer between 0 and 255)
+| 128+n | Error signal "n", e.g.
+|       | 129 - Terminated with signal number 1 (i.e. 128+1, _SIGHUP_)
+|       | 130 - Terminated by `Ctrl-C` (i.e. 128+2, _SIGINT_)
+|       | 192 - Terminated with _SIGRTMAX_ (i.e. 128+64, last Linux signal)
+| **193-254** | User-defined return codes
+| 255   | Return code out of range (i.e. not 0-254)
 
 ## Tools
 
